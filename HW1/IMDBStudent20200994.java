@@ -21,8 +21,11 @@ public class IMDBStudent20200994 {
 			
 			itr.nextToken(); // id
 			itr.nextToken(); // title
-			word.set(itr.nextToken()); // genre
-			context.write(word, one);
+			String genres = itr.nextToken(); // genre 
+			itr = new StringTokenizer(genres, "|");
+			while (itr.hasMoreTokens()) {	
+				context.write(word, one);
+			}
 		}
 	}
 
