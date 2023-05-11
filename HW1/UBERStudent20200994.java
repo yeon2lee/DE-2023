@@ -22,14 +22,14 @@ public class UBERStudent20200994 {
 			StringTokenizer itr = new StringTokenizer(value.toString(), ",");
 			String baseNumber = itr.nextToken(); // region
 			String tmpDate = itr.nextToken(); // date
-        		String trips = itr.nextToken(); // trips
 			String vehicles = itr.nextToken(); // vehicles
+        		String trips = itr.nextToken(); // trips
 
 			// date to dayOfWeek
-			StringTokenizer itr2 = new StringTokenizer(tmpDate, "/");
-			int month = Integer.parseInt(itr2.nextToken());
-			int day = Integer.parseInt(itr2.nextToken());
-			int year = Integer.parseInt(itr2.nextToken());
+			itr = new StringTokenizer(tmpDate, "/");
+			int month = Integer.parseInt(itr.nextToken());
+			int day = Integer.parseInt(itr.nextToken());
+			int year = Integer.parseInt(itr.nextToken());
 
 			String[] days = {"MON", "TUE", "WED", "THR", "FRI", "SAT", "SUN"};
 			LocalDate date = LocalDate.of(year, month, day);
