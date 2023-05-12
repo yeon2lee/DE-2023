@@ -17,15 +17,16 @@ public class IMDBStudent20200994 {
 		private Text word = new Text();
 
 		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-			StringTokenizer itr = new StringTokenizer(value.toString(), "::");
-			
-			itr.nextToken(); // id
-			itr.nextToken(); // title
-			String genres = itr.nextToken(); // genre 
-			itr = new StringTokenizer(genres, "|");
-			while (itr.hasMoreTokens()) {
-				word.set(itr.nextToken());	
-				context.write(word, one);
+			// IMDB data는 id, title, genre 순
+			// 1::Toy Story (1995)::Animation|Children's|Comedy
+			String[] imdb = value.toString().split("::");
+			if (imdb.length >= 3) { // genre가 포함된 데이터일 때만
+				String genres = imdb[2]; // genre 
+				StringTokenizer itr = new StringTokenizer(genres, "|");
+				while (itr.hasMoreTokens()) {
+					word.set(itr.nextToken());	
+					context.write(word, one);
+				}
 			}
 		}
 	}
