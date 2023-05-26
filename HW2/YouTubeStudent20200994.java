@@ -55,7 +55,7 @@ public class YoutubeStudent20200994 {
         Text word = new Text();
         DoubleWritable result = new DoubleWritable();
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String[] youtube = value.toString().split("|");
+            String[] youtube = value.toString().split("\\|");
             if (youtube.length >= 7) { // category와 rating이 포함된 데이터일 때만
                 String category = youtube[3]; // category
                 double rating = Double.parseDouble(youtube[6]); // rating
