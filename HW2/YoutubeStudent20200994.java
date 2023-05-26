@@ -8,7 +8,9 @@ import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.*;
 import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.util.GenericOptionsParser;
+
 public class YoutubeStudent20200994 {
+
     public static class Youtube {
         public String category;
         public double rating;
@@ -50,6 +52,8 @@ public class YoutubeStudent20200994 {
     }
 
     public static class YoutubeMapper extends Mapper<Object, Text, Text, DoubleWritable> {
+        Text word = new Text();
+        DoubleWritable result = new DoubleWritable();
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             String[] youtube = value.toString().split("|");
             if (youtube.length >= 7) { // category와 rating이 포함된 데이터일 때만
@@ -106,11 +110,12 @@ public class YoutubeStudent20200994 {
         Job job = new Job(conf, "YoutubeStudent20200994");
         job.setJarByClass(YoutubeStudent20200994.class);
         job.setMapperClass(YoutubeMapper.class);
+        job.setCombinerClass(YoutubeReducer.class);
         job.setReducerClass(YoutubeReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
         FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
-        FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]);
+        FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
         FileSystem.get(job.getConfiguration()).delete( new Path(otherArgs[1]), true);
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
