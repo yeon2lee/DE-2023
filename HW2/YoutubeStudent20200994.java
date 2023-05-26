@@ -106,7 +106,6 @@ public class YoutubeStudent20200994 {
         Job job = new Job(conf, "YoutubeStudent20200994");
         job.setJarByClass(YoutubeStudent20200994.class);
         job.setMapperClass(YoutubeMapper.class);
-        job.setCombinerClass(YoutubeReducer.class);
         job.setReducerClass(YoutubeReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
