@@ -9,7 +9,7 @@ import org.apache.hadoop.mapreduce.lib.input.*;
 import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-public class YoutubeStudent20200994 {
+public class YouTubeStudent20200994 {
 
     public static class Youtube {
         public String category;
