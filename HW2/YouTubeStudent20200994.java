@@ -65,11 +65,10 @@ public class YouTubeStudent20200994 {
                 context.write(word, result);
             }
         }
-
     }
 
     public static class YoutubeReducer extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
-        private PriorityQueue<Youtube> queue ;
+        private PriorityQueue<Youtube> queue;
         private Comparator<Youtube> comp = new YoutubeComparator();
         private int topK;
         public void reduce(Text key, Iterable<DoubleWritable> values, Context context) throws IOException, InterruptedException {
@@ -110,10 +109,11 @@ public class YouTubeStudent20200994 {
         Job job = new Job(conf, "YoutubeStudent20200994");
         job.setJarByClass(YoutubeStudent20200994.class);
         job.setMapperClass(YoutubeMapper.class);
-        job.setCombinerClass(YoutubeReducer.class);
         job.setReducerClass(YoutubeReducer.class);
+
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
+
         FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
         FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
         FileSystem.get(job.getConfiguration()).delete( new Path(otherArgs[1]), true);
