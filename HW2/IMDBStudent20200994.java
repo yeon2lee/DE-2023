@@ -28,10 +28,6 @@ public class IMDBStudent20200994 {
         public Double getRating() {
             return this.rating;
         }
-
-        public String getString() {
-            return movie + " " + rating;
-        }
     }
 
     public static class DoubleString implements WritableComparable {
@@ -125,16 +121,16 @@ public class IMDBStudent20200994 {
     public static class IMDBMapper extends Mapper<Object, Text, DoubleString, Text> {
         boolean movieFile = true;
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            StringTokenizer itr = new StringTokenizer(value.toString(), "::");
+            String[] movie = value.toString().split("::");
             DoubleString outputKey = new DoubleString();
             Text outputValue = new Text();
 
             if (movieFile) {
-                String id = itr.nextToken();
-                String title = itr.nextToken();
-                String genre = itr.nextToken();
+                String id = movie[0];
+                String title = movie[1];
+                String genre = movie[2];
 
-                itr = new StringTokenizer(genre, "|");
+                StringTokenizer itr = new StringTokenizer(genre, "|");
                 boolean isFantasy = false;
                 while (itr.hasMoreTokens()) {
                     if (itr.nextToken().equals("Fantasy")) {
@@ -150,8 +146,8 @@ public class IMDBStudent20200994 {
                 }
 
             } else {
-                String id = itr.nextToken();
-                String rating = itr.nextToken();
+                String id = movie[1];
+                String rating = movie[2];
 
                 outputKey = new DoubleString(id, "Ratings");
                 outputValue.set("Ratings," + rating);
@@ -167,33 +163,45 @@ public class IMDBStudent20200994 {
         }
     }
 
-    public static class IMDBReducer extends Reducer<DoubleString, Text, Text, Text> {
+    public static class IMDBReducer extends Reducer<DoubleString, Text, Text, DoubleWritable> {
         private PriorityQueue<IMDB> queue;
         private Comparator<IMDB> comp = new IMDBComparator();
         private int topK;
         public void reduce(DoubleString key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             double sum = 0;
             int count = 0;
-            String movieTitle = "";
+            String title = "";
             for (Text val : values) {
-                StringTokenizer itr = new StringTokenizer(val.toString(), ",");
-                String file_type = itr.nextToken();
+                String[] data = val.toString().split(",");
+                String file_type = data[0];
 
                 if (count == 0) {
                     if (!file_type.equals("Movies")) {
                         break;
                     }
-                    movieTitle = itr.nextToken();
+                    title = data[1];
                 } else {
-                    sum += Double.parseDouble(itr.nextToken());
+                    sum += Double.parseDouble(data[1]);
                 }
-
                 count++;
             }
 
             if (sum != 0) {
-                double average = sum / count;
-                insertIMDB(queue, movieTitle, average, topK);
+                double average = sum / (count - 1);
+                insertIMDB(queue, title, average, topK);
+            }
+        }
+
+        protected void setup(Context context) throws IOException, InterruptedException {
+            Configuration conf = context.getConfiguration();
+            topK = conf.getInt("topK", -1);
+            queue = new PriorityQueue<IMDB>( topK , comp);
+        }
+
+        protected void cleanup(Context context) throws IOException, InterruptedException {
+            while(queue.size() != 0) {
+                IMDB imdb = (IMDB) queue.remove();
+                context.write(new Text(imdb.getMovie()), new DoubleWritable(imdb.getRating()));
             }
         }
     }
@@ -213,7 +221,7 @@ public class IMDBStudent20200994 {
         job.setReducerClass(IMDBReducer.class);
 
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(Text.class);
+        job.setOutputValueClass(DoubleWritable.class);
 
         job.setMapOutputKeyClass(DoubleString.class);
         job.setMapOutputValueClass(Text.class);
