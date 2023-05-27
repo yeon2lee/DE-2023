@@ -56,18 +56,12 @@ public class YouTubeStudent20200994 {
         DoubleWritable result = new DoubleWritable();
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             String[] youtube = value.toString().split("\\|");
-            if (youtube.length >= 7) { // category와 rating이 포함된 데이터일 때만
-                String categories = youtube[3]; // category
-                double rating = Double.parseDouble(youtube[6]); // rating
+            String category = youtube[3]; // category
+            double rating = Double.parseDouble(youtube[youtube.length - 1]); // rating
 
-                StringTokenizer itr = new StringTokenizer(categories, "&");
-                while (itr.hasMoreTokens()) {
-                    String category = itr.nextToken().trim();
-                    word.set(category);
-                    result.set(rating);
-                    context.write(word, result);
-                }
-            }
+            word.set(category);
+            result.set(rating);
+            context.write(word, result);
         }
     }
 
