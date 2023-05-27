@@ -57,12 +57,16 @@ public class YouTubeStudent20200994 {
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             String[] youtube = value.toString().split("\\|");
             if (youtube.length >= 7) { // category와 rating이 포함된 데이터일 때만
-                String category = youtube[3]; // category
+                String categories = youtube[3]; // category
                 double rating = Double.parseDouble(youtube[6]); // rating
 
-                word.set(category);
-                result.set(rating);
-                context.write(word, result);
+                StringTokenizer itr = new StringTokenizer(categories, "&");
+                while (itr.hasMoreTokens()) {
+                    String category = itr.nextToken().trim();
+                    word.set(category);
+                    result.set(rating);
+                    context.write(word, result);
+                }
             }
         }
     }
@@ -113,7 +117,7 @@ public class YouTubeStudent20200994 {
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
-        
+
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(DoubleWritable.class);
 
