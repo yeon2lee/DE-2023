@@ -141,7 +141,7 @@ public class IMDBStudent20200994 {
 
                 if (isFantasy) {
                     outputKey = new DoubleString(id, "Movies");
-                    outputValue.set("Movies," + title);
+                    outputValue.set("Movies::" + title);
                     context.write( outputKey, outputValue );
                 }
 
@@ -150,7 +150,7 @@ public class IMDBStudent20200994 {
                 String rating = movie[2];
 
                 outputKey = new DoubleString(id, "Ratings");
-                outputValue.set("Ratings," + rating);
+                outputValue.set("Ratings::" + rating);
                 context.write( outputKey, outputValue );
             }
 
@@ -172,7 +172,7 @@ public class IMDBStudent20200994 {
             int count = 0;
             String title = "";
             for (Text val : values) {
-                String[] data = val.toString().split(",");
+                String[] data = val.toString().split("::");
                 String file_type = data[0];
 
                 if (count == 0) {
