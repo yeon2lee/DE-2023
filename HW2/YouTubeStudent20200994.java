@@ -52,16 +52,12 @@ public class YouTubeStudent20200994 {
     }
 
     public static class YoutubeMapper extends Mapper<Object, Text, Text, DoubleWritable> {
-        Text word = new Text();
-        DoubleWritable result = new DoubleWritable();
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String[] youtube = value.toString().split("\\|");
-            String category = youtube[3]; // category
-            double rating = Double.parseDouble(youtube[youtube.length - 1]); // rating
+            String[] data = value.toString().split("\\|");
+            String category = data[3]; // category
+            double rating = Double.parseDouble(data[6]); // rating
 
-            word.set(category);
-            result.set(rating);
-            context.write(word, result);
+            context.write(new Text(category), new DoubleWritable(rating));
         }
     }
 
@@ -103,7 +99,7 @@ public class YouTubeStudent20200994 {
             System.exit(2);
         }
 
-        conf.setInt("topK", Integer.valueOf(otherArgs[2]));
+        conf.setInt("topK", Integer.parseInt(otherArgs[2]));
         Job job = new Job(conf, "YoutubeStudent20200994");
         job.setJarByClass(YoutubeStudent20200994.class);
         job.setMapperClass(YoutubeMapper.class);
