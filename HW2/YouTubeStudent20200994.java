@@ -100,8 +100,8 @@ public class YouTubeStudent20200994 {
         }
 
         conf.setInt("topK", Integer.parseInt(otherArgs[2]));
-        Job job = new Job(conf, "YoutubeStudent20200994");
-        job.setJarByClass(YoutubeStudent20200994.class);
+        Job job = new Job(conf, "YouTubeStudent20200994");
+        job.setJarByClass(YouTubeStudent20200994.class);
         job.setMapperClass(YoutubeMapper.class);
         job.setReducerClass(YoutubeReducer.class);
 
